@@ -78,40 +78,17 @@ services:
     volumes:
       - ./config/faf-python-server/faf-server.pem:/code/faf-server.pem
     ports:
-      - "8001:8001" # Server
+      - "8001:8001" # Main client-connection TCP port
+      - "6112:6112/udp" # Non-ICE UDP peering ports
+      - "30351:30351/udp"
+      - "194:194/udp"
+      - "3535:3535/udp"
+      - "7:7/udp"
+      - "53:53/udp"
+      - "67:67/udp"
     depends_on:
       - faf-init-volumes
       - faf-db
-
-  #
-  # FAF game server for clients to connect to.
-  #
-  faf-java-server:
-    container_name: faf-java-server
-    image: faforever/faf-java-server:1.0.3
-    user: ${FAF_JAVA_SERVER_USER}
-    networks:
-      faf:
-        aliases:
-          - "faf-java-server"
-    # Service currently not in use
-    # restart: always
-    env_file: ./config/faf-java-server/faf-java-server.env
-    expose:
-      - "8089" # HTTP Management API
-    ports:
-      - "8001:8001" # Server
-    volumes:
-      - ./data/faf-java-server/logs:/logs
-    depends_on:
-      - faf-init-volumes
-      - faf-db
-    # TODO move to Dockerfile
-    healthcheck:
-      test: "wget -q -O /dev/null http://localhost:8089/health"
-      interval: 30s
-      timeout: 5s
-      retries: 3
 
   #
   # FAF JSON-API to provide data over HTTP.
