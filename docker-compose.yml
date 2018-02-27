@@ -50,6 +50,26 @@ services:
       - faf-init-volumes
 
   #
+  # FAF redis database.
+  #
+  faf-redis:
+    container_name: faf-redis
+    image: redis:4-alpine
+    networks:
+      faf:
+        aliases:
+          - "faf-redis"
+    restart: always
+    env_file: ./config/faf-redis/faf-redis.env
+    command: "redis-server --appendonly yes"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/faf-redis:/data
+    depends_on:
+      - faf-init-volumes
+
+  #
   # Prometheus exporter for MySQL server metrics.
   #
   faf-mysql-exporter:
