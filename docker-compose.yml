@@ -612,6 +612,24 @@ services:
     volumes:
       - ./data/faf-policy-server/faf-uid-verifier/verifier:/app/verifier
 
+  #
+  # FAF Galactic War backend (Websocket and API)
+  #
+  faf-gw-backend:
+    container_name: faf-gw-backend
+    image: faforever/faf-gw-backend:v0.0.3
+    command: /bin/sh
+    networks:
+      faf:
+        aliases:
+          - "faf-gw-backend"
+    restart: always
+    env_file: ./config/faf-gw-backend/faf-gw-backend.env
+    ports:
+      - "8012:8012" # HTTP API
+    depends_on:
+      - faf-init-volumes
+      
 networks:
   faf:
     driver: bridge
